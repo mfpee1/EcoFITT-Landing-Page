@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ecofitt — Annual Plans</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --magenta: #CC44FF;
+    --purple: #8844EE;
+    --cyan: #44CCFF;
+    --bg: #000000;
+    --surface: #0a0a0a;
+    --surface2: #111111;
+    --text: #ffffff;
+    --muted: #888888;
+    --grad: linear-gradient(135deg, #CC44FF, #8844EE, #44CCFF);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* NOISE */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* ORBS */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    filter: blur(100px);
+    opacity: 0.07;
+    z-index: 0;
+  }
+  .orb-1 { width: 600px; height: 600px; background: var(--magenta); top: -200px; right: -200px; }
+  .orb-2 { width: 500px; height: 500px; background: var(--cyan); bottom: 20%; left: -200px; }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    background: rgba(0,0,0,0.6);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+  }
+
+  .nav-logo span {
+    background: var(--grad);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .nav-back {
+    font-size: 0.88rem;
+    color: var(--muted);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s;
+  }
+  .nav-back:hover { color: white; }
+
+  /* HERO */
+  .hero {
+    padding: 160px 24px 80px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(ellipse, rgba(136,68,238,0.12) 0%, transparent 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.78rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    margin-bottom: 24px;
+    animation: fadeUp 0.7s ease 0.1s both;
+  }
+
+  .eyebrow::before {
+    content: '';
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--cyan);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.8rem, 7vw, 5.5rem);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    margin-bottom: 24px;
+    animation: fadeUp 0.7s ease 0.2s both;
+    position: relative;
+    z-index: 2;
+  }
+
+  .grad-text {
+    background: var(--grad);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: 1.1rem;
+    color: var(--muted);
+    max-width: 520px;
+    margin: 0 auto 16px;
+    line-height: 1.7;
+    font-weight: 300;
+    animation: fadeUp 0.7s ease 0.35s both;
+    position: relative;
+    z-index: 2;
+  }
+
+  .apple-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 100px;
+    padding: 10px 20px;
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.45);
+    margin-top: 20px;
+    animation: fadeUp 0.7s ease 0.45s both;
+    position: relative;
+    z-index: 2;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* SAVINGS BANNER */
+  .savings-banner {
+    max-width: 900px;
+    margin: 0 auto 64px;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .savings-inner {
+    background: linear-gradient(135deg, rgba(204,68,255,0.08), rgba(68,204,255,0.08));
+    border: 1px solid rgba(136,68,238,0.25);
+    border-radius: 20px;
+    padding: 24px 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .savings-stat {
+    text-align: center;
+  }
+
+  .savings-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 800;
+    background: var(--grad);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .savings-label {
+    font-size: 0.78rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .savings-divider {
+    width: 1px;
+    height: 40px;
+    background: rgba(255,255,255,0.07);
+  }
+
+  /* PLANS GRID */
+  .plans {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px 120px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .plans-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 2px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 28px;
+    overflow: hidden;
+  }
+
+  .plan-card {
+    background: var(--surface);
+    padding: 44px 32px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .plan-card:hover { background: var(--surface2); }
+
+  .plan-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--grad);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .plan-card:hover::before { opacity: 1; }
+
+  /* Popular badge */
+  .plan-card.popular {
+    background: rgba(136,68,238,0.06);
+  }
+
+  .popular-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(136,68,238,0.15);
+    border: 1px solid rgba(136,68,238,0.3);
+    border-radius: 100px;
+    padding: 5px 14px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--purple);
+    margin-bottom: 24px;
+    width: fit-content;
+  }
+
+  .plan-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin-bottom: 6px;
+    letter-spacing: -0.02em;
+  }
+
+  .plan-tagline {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 28px;
+    font-weight: 300;
+    line-height: 1.5;
+  }
+
+  .plan-price-block {
+    margin-bottom: 8px;
+  }
+
+  .plan-price {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.6rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    background: var(--grad);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .plan-period {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .plan-monthly-equiv {
+    font-size: 0.8rem;
+    color: rgba(68,204,255,0.7);
+    margin-bottom: 28px;
+    font-weight: 500;
+  }
+
+  .plan-savings-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(74,222,128,0.08);
+    border: 1px solid rgba(74,222,128,0.2);
+    border-radius: 100px;
+    padding: 5px 12px;
+    font-size: 0.75rem;
+    color: #4ade80;
+    font-weight: 500;
+    margin-bottom: 28px;
+    width: fit-content;
+  }
+
+  .plan-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.05);
+    margin-bottom: 24px;
+  }
+
+  .plan-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    margin-bottom: 36px;
+    flex: 1;
+  }
+
+  .plan-features li {
+    font-size: 0.88rem;
+    color: rgba(255,255,255,0.65);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    line-height: 1.45;
+    font-weight: 300;
+  }
+
+  .plan-features li::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--grad);
+    flex-shrink: 0;
+    margin-top: 6px;
+  }
+
+  .plan-cta {
+    display: block;
+    width: 100%;
+    padding: 15px 24px;
+    border-radius: 100px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 0.95rem;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.25s;
+    border: none;
+  }
+
+  .plan-cta.primary {
+    background: var(--grad);
+    color: white;
+    box-shadow: 0 0 32px rgba(136,68,238,0.35);
+  }
+
+  .plan-cta.primary:hover {
+    opacity: 0.88;
+    transform: translateY(-2px);
+    box-shadow: 0 0 48px rgba(136,68,238,0.55);
+  }
+
+  .plan-cta.ghost {
+    background: transparent;
+    color: white;
+    border: 1px solid rgba(255,255,255,0.12);
+  }
+
+  .plan-cta.ghost:hover {
+    border-color: rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.04);
+    transform: translateY(-2px);
+  }
+
+  /* TRUST STRIP */
+  .trust-strip {
+    max-width: 900px;
+    margin: 0 auto 80px;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+  }
+
+  .trust-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+
+  .trust-icon {
+    font-size: 1rem;
+  }
+
+  /* FAQ */
+  .faq {
+    max-width: 700px;
+    margin: 0 auto 100px;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .faq-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin-bottom: 36px;
+    text-align: center;
+    letter-spacing: -0.02em;
+  }
+
+  .faq-item {
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding: 20px 0;
+  }
+
+  .faq-q {
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: white;
+  }
+
+  .faq-a {
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  .faq-a a {
+    color: var(--cyan);
+    text-decoration: none;
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 48px 24px 40px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .footer-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+  }
+
+  .footer-logo span {
+    background: var(--grad);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  footer p {
+    color: var(--muted);
+    font-size: 0.82rem;
+    font-weight: 300;
+  }
+
+  /* SCROLL REVEAL */
+  .reveal {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.hidden-start { opacity: 0; transform: translateY(28px); }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav { padding: 16px 20px; }
+    .hero { padding: 130px 20px 60px; }
+    .savings-inner { flex-direction: column; text-align: center; }
+    .savings-divider { display: none; }
+    .plans-grid { grid-template-columns: 1fr; }
+    .trust-strip { gap: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="nav-logo">
+    <span>EcoFITT</span>
+  </a>
+  <a href="/" class="nav-back">← Back to home</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero reveal">
+  <div class="eyebrow">Annual Plans · Web Exclusive</div>
+  <h1>Train more.<br><span class="grad-text">Pay less.</span></h1>
+  <p class="hero-sub">Our annual trainer plans are only available here — save up to 25% compared to monthly and unlock everything Ecofitt has to offer.</p>
+  <div class="apple-note">💡 Monthly plans available in the app · Annual plans here on the web</div>
+</div>
+
+<!-- SAVINGS BANNER -->
+<div class="savings-banner reveal">
+  <div class="savings-inner">
+    <div class="savings-stat">
+      <div class="savings-num">25%</div>
+      <div class="savings-label">Average savings vs monthly</div>
+    </div>
+    <div class="savings-divider"></div>
+    <div class="savings-stat">
+      <div class="savings-num">10%</div>
+      <div class="savings-label">Commission (vs 30% elsewhere)</div>
+    </div>
+    <div class="savings-divider"></div>
+    <div class="savings-stat">
+      <div class="savings-num">5hrs+</div>
+      <div class="savings-label">Saved per week via automation</div>
+    </div>
+    <div class="savings-divider"></div>
+    <div class="savings-stat">
+      <div class="savings-num">42+</div>
+      <div class="savings-label">Sports supported</div>
+    </div>
+  </div>
+</div>
+
+<!-- PLANS -->
+<div class="plans">
+  <div class="plans-grid reveal">
+
+    <!-- STARTER -->
+    <div class="plan-card">
+      <div class="plan-name">Starter</div>
+      <div class="plan-tagline">Everything you need to launch and start growing your client base.</div>
+      <div class="plan-price-block">
+        <div class="plan-price">$1,323</div>
+        <div class="plan-period">per year</div>
+        <div class="plan-monthly-equiv">≈ $110/mo billed annually</div>
+      </div>
+      <div class="plan-savings-pill">✓ Save $441 vs monthly</div>
+      <div class="plan-divider"></div>
+      <ul class="plan-features">
+        <li>Up to 15 active clients</li>
+        <li>AI workout &amp; meal plan generation</li>
+        <li>Client progress tracking &amp; analytics</li>
+        <li>Direct messaging with clients</li>
+        <li>Trainer discovery profile</li>
+        <li>5 automation workflows</li>
+        <li>10% commission on client invoices</li>
+      </ul>
+      <a href="https://buy.stripe.com/cNi3cu6QY1N2bny0TuenS03" class="plan-cta ghost" target="_blank" rel="noopener">
+        Get Starter Annual →
+      </a>
+    </div>
+
+    <!-- PROFESSIONAL -->
+    <div class="plan-card popular">
+      <div class="popular-badge">⭐ Most Popular</div>
+      <div class="plan-name">Professional</div>
+      <div class="plan-tagline">For established trainers ready to scale their business seriously.</div>
+      <div class="plan-price-block">
+        <div class="plan-price">$2,223</div>
+        <div class="plan-period">per year</div>
+        <div class="plan-monthly-equiv">≈ $185/mo billed annually</div>
+      </div>
+      <div class="plan-savings-pill">✓ Save $741 vs monthly</div>
+      <div class="plan-divider"></div>
+      <ul class="plan-features">
+        <li>Up to 40 active clients</li>
+        <li>AI workout &amp; meal plan generation</li>
+        <li>Advanced client analytics &amp; reporting</li>
+        <li>12 automation workflows</li>
+        <li>Bulk messaging &amp; check-in automation</li>
+        <li>Revenue tracking dashboard</li>
+        <li>10% commission on client invoices</li>
+      </ul>
+      <a href="https://buy.stripe.com/28E6oGa3agHW9fq6dOenS02" class="plan-cta primary" target="_blank" rel="noopener">
+        Get Professional Annual →
+      </a>
+    </div>
+
+    <!-- STUDIO -->
+    <div class="plan-card">
+      <div class="plan-name">Studio</div>
+      <div class="plan-tagline">Run a full operation — multiple trainers, high volume, full control.</div>
+      <div class="plan-price-block">
+        <div class="plan-price">$4,473</div>
+        <div class="plan-period">per year</div>
+        <div class="plan-monthly-equiv">≈ $373/mo billed annually</div>
+      </div>
+      <div class="plan-savings-pill">✓ Save $1,491 vs monthly</div>
+      <div class="plan-divider"></div>
+      <ul class="plan-features">
+        <li>Up to 100 active clients</li>
+        <li>Multi-trainer team management</li>
+        <li>AI generation for all team clients</li>
+        <li>All 12 automation workflows</li>
+        <li>Studio-level analytics &amp; reporting</li>
+        <li>10% commission on client invoices</li>
+      </ul>
+      <a href="https://buy.stripe.com/fZu3cu5MU8bq4Zaby8enS01" class="plan-cta ghost" target="_blank" rel="noopener">
+        Get Studio Annual →
+      </a>
+    </div>
+
+    <!-- ENTERPRISE -->
+    <div class="plan-card">
+      <div class="plan-name">Enterprise</div>
+      <div class="plan-tagline">For large gyms, franchises, and high-volume professional operations.</div>
+      <div class="plan-price-block">
+        <div class="plan-price">$8,073</div>
+        <div class="plan-period">per year</div>
+        <div class="plan-monthly-equiv">≈ $673/mo billed annually</div>
+      </div>
+      <div class="plan-savings-pill">✓ Save $2,691 vs monthly</div>
+      <div class="plan-divider"></div>
+      <ul class="plan-features">
+        <li>Up to 200 active clients</li>
+        <li>Multi-trainer and multi-location teams supported</li>
+        <li>All Studio features, plus the highest client capacity</li>
+        <li>10% commission on client invoices</li>
+      </ul>
+      <a href="https://buy.stripe.com/3cIeVc0sA2R62R2gSsenS00" class="plan-cta ghost" target="_blank" rel="noopener">
+        Get Enterprise Annual →
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<!-- TRUST STRIP -->
+<div class="trust-strip reveal">
+  <div class="trust-item"><span class="trust-icon">🔒</span> Secured by Stripe</div>
+  <div class="trust-item"><span class="trust-icon">↩️</span> Cancel anytime</div>
+  <div class="trust-item"><span class="trust-icon">📧</span> Support at ecofit.studio</div>
+  <div class="trust-item"><span class="trust-icon">⚡</span> Instant account activation</div>
+</div>
+
+<!-- FAQ -->
+<div class="faq reveal">
+  <div class="faq-title">Common questions</div>
+
+  <div class="faq-item">
+    <div class="faq-q">Why are annual plans only on the website?</div>
+    <div class="faq-a">Apple's App Store limits in-app subscription prices to $999.99/year. Our higher-tier annual plans exceed that cap, so we offer them directly here — with no middleman and more savings passed to you.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q">How do I access my plan after purchasing?</div>
+    <div class="faq-a">After completing checkout, you'll receive a confirmation email. Your Ecofitt account will be upgraded automatically within a few minutes. If it doesn't activate, email us at <a href="/cdn-cgi/l/email-protection#9feceaefeff0edebdffafcf0f9f6ebb1ecebeafbf6f0"><span class="__cf_email__" data-cfemail="087b7d7878677a7c486d6b676e617c267b7c7d6c6167">[email&#160;protected]</span></a>.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q">Can I cancel or switch plans?</div>
+    <div class="faq-a">Annual plans are billed once per year. You can cancel renewal at any time before your next billing date. To switch plans mid-year, contact support and we'll prorate the difference.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q">Is payment secure?</div>
+    <div class="faq-a">Yes. All payments are processed by Stripe, which is PCI-DSS Level 1 certified. Ecofitt never stores your card details.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q">What's the difference between annual plans and the monthly plans in the app?</div>
+    <div class="faq-a">They unlock the same features — annual plans simply save you 25% and are billed once a year. Monthly plans are available in the Ecofitt app through Apple's standard in-app purchase system.</div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">
+    <span>EcoFITT</span>
+  </div>
+  <p>© 2025 Ecofitt · <a href="/cdn-cgi/l/email-protection#23505653534c51576346404c454a570d505756474a4c" style="color: var(--muted); text-decoration: none;"><span class="__cf_email__" data-cfemail="0e7d7b7e7e617c7a4e6b6d6168677a207d7a7b6a6761">[email&#160;protected]</span></a> · ecofit.studio</p>
+  <p style="margin-top: 8px; font-size: 0.75rem; color: rgba(255,255,255,0.15);">One app. Total fitness.</p>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  reveals.forEach(el => el.classList.add('hidden-start'));
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i
