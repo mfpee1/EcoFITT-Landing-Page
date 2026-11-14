@@ -408,6 +408,11 @@ dialog::backdrop { background: rgba(0,0,0,.6); backdrop-filter: blur(3px); }
   const API = "https://us-central1-fitnessappnew-9c0bb.cloudfunctions.net/api";
   const SUPPORT = "support@ecofit.studio";
   const $ = (id) => document.getElementById(id);
+  // replaceChildren turns null into the text "null"; drop empty slots instead.
+  const _replaceChildren = Element.prototype.replaceChildren;
+  Element.prototype.replaceChildren = function (...nodes) {
+    return _replaceChildren.apply(this, nodes.flat().filter((n) => n != null && n !== false));
+  };
 
   // Build DOM safely: every data value goes in as text, never as HTML.
   function el(tag, attrs, ...kids) {
